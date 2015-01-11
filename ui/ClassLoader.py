@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-"""PyQt4 port of the layouts/basiclayout example from Qt v4.x"""
 
 from PySide import QtCore, QtGui
 import sys
@@ -21,62 +18,58 @@ class ClassLoader():
 		__windowSize = [640, 350]
 
 		# defind class
-		Awindow      = Anvil.core.Window()
-		Abox         = Anvil.core.Box()
-		Alayout      = Anvil.core.Layout()
-		Atext        = Anvil.core.Text()
-		Atextfield   = Anvil.core.Textfield()
-		Aitemlist    = Anvil.core.Itemlist()
-		Abutton      = Anvil.core.Button()
+		Awindow      = Anvil.core.Window
+		Abox         = Anvil.core.Box
+		Alayout      = Anvil.core.Layout
+		Atext        = Anvil.core.Text
+		Atextfield   = Anvil.core.Textfield
+		Aitemlist    = Anvil.core.Itemlist
+		Abutton      = Anvil.core.Button
 		BCgitActions = BCgit.core.BCgitActions()
 
 		# window init
-		self.window = Awindow.create( title='BCgit', size=[ __windowSize[0], __windowSize[1] ] )
+		self.window = Awindow( title='BCgit', size=[ __windowSize[0], __windowSize[1] ] )
+		layout_main = Alayout( parent=self.window, x=10, y=20 )
 
 		# boxs init
-		box_general = Abox.create( parent=self.window, name='General', w=450, h=320, x=10, y=25 )
-		box_branch  = Abox.create( parent=self.window, name='Branch',  w=160, h=320, x=470, y=25 )
+		box_general = Abox( name='General', w=440, h=320 )
+		box_branch  = Abox( name='Branch',  w=170, h=320 )
 
 		# layouts init
-		layout_workspace = Alayout.create( parent=box_general )
-		layout_branch    = Alayout.create( parent=box_branch )
+		layout_workspace = Alayout( parent=box_general )
+		layout_branch    = Alayout( parent=box_branch )
 
 		# texts init
-		text_projectWS = Atext.create( text='Project workspace :' )
-		text_userWS    = Atext.create( text='User workspace     :' )
+		text_projectWS = Atext( text='Project workspace :' )
+		text_userWS    = Atext( text='User workspace     :' )
 
-		# textfields init
-		self.textfield_projectWS = Atextfield.create( text=self.projectWS, enable=False )
-		self.textfield_userWS    = Atextfield.create( text=self.userWS, enable=False )
+		# # textfields init
+		self.textfield_projectWS = Atextfield( text=self.projectWS, enable=False, w=250 )
+		self.textfield_userWS    = Atextfield( text=self.userWS, enable=False, w=250 )
 
 		# itemlists init
-		self.itemlist_stat   = Aitemlist.create( 
-												dbclick=lambda x:self.add( file=self.itemlist_stat.currentItem().text() )
-												)
-		self.itemlist_branch = Aitemlist.create(
-												dbclick=lambda x:self.checkout( branch=self.itemlist_branch.currentItem().text() )
-												)
+		self.itemlist_stat   = Aitemlist( dbclick=lambda x:self.add( file=self.itemlist_stat.currentItem().text() ), w=420, h=200 )
+		self.itemlist_branch = Aitemlist( dbclick=lambda x:self.checkout( branch=self.itemlist_branch.currentItem().text() ), w=150, h=230 )
 
 		# buttons init
-		button_stat   = Abutton.create( name='stat',   cmd=self.stat )
-		button_diff   = Abutton.create( name='diff',   cmd=self.diff )
-		button_rebase = Abutton.create( name='rebase', cmd=self.rebase )
-		button_commit = Abutton.create( name='commit', cmd=self.commit )
-		button_new    = Abutton.create( name='new',    cmd=self.newBranch )
-		button_delete = Abutton.create( name='delete', cmd=self.deleteBranch )
+		button_stat   = Abutton( name='stat',   cmd=self.stat )
+		button_diff   = Abutton( name='diff',   cmd=self.diff )
+		button_rebase = Abutton( name='rebase', cmd=self.rebase )
+		button_commit = Abutton( name='commit', cmd=self.commit )
+		button_new    = Abutton( name='new',    cmd=self.newBranch )
+		button_delete = Abutton( name='delete', cmd=self.deleteBranch )
 
 		# defind layouts content
-		layout_workspace.addRow( text_projectWS, self.textfield_projectWS )
-		layout_workspace.addRow( text_userWS, self.textfield_userWS )
-		# layout_workspace.addRow( button_stat, self.itemlist_stat )
-		layout_workspace.addWidget( self.itemlist_stat )
-		layout_workspace.addWidget( button_stat )
-		layout_workspace.addWidget( button_diff )
-		layout_branch.addWidget( button_rebase )
-		layout_branch.addWidget( button_commit )
-		layout_branch.addWidget( button_new )
-		layout_branch.addWidget( button_delete )
-		layout_branch.addWidget( self.itemlist_branch )
+		layout_main.add( [box_general, box_branch] )
+
+		layout_workspace.add( [text_projectWS, self.textfield_projectWS] )
+		layout_workspace.add( [text_userWS,    self.textfield_userWS] )
+		layout_workspace.add( [button_stat,    button_diff] )
+		layout_workspace.add( self.itemlist_stat )
+
+		layout_branch.add( [button_rebase, button_commit] )
+		layout_branch.add( [button_new, button_delete] )
+		layout_branch.add( self.itemlist_branch )
 
 		# update UI
 		self.stat()
@@ -96,7 +89,8 @@ class ClassLoader():
 		self.userWS = userWS
 
 
-
+	def test( self ):
+		print 'ok'
 
 
 
@@ -113,7 +107,6 @@ class ClassLoader():
 	def stat( self ):
 		'''Update the itemlist for stat UI.'''
 		# defind class
-		Aitemlist    = Anvil.core.Itemlist()
 		BCgitActions = BCgit.core.BCgitActions()
 
 		# defind listStat
@@ -124,27 +117,24 @@ class ClassLoader():
 		for i in range( len(bcstat['newfiles'][0]) ) :
 			color = untrack
 			if bcstat['newfiles'][1][i] == True : color = track
-			formatDic[ len(formatDic) ] = [ bcstat['newfiles'][0][i], 'BCgit/icons/new.png', color ]
+			formatDic[ len(formatDic) ] = [ bcstat['newfiles'][0][i], '../icons/new.png', color ]
 		for i in range( len(bcstat['deletedfiles'][0]) ) :
 			color = untrack
 			if bcstat['deletedfiles'][1][i] == True : color = track
-			formatDic[ len(formatDic) ] = [ bcstat['deletedfiles'][0][i], 'BCgit/icons/deleted.png', color ]
+			formatDic[ len(formatDic) ] = [ bcstat['deletedfiles'][0][i], '../icons/deleted.png', color ]
 
 		for i in range( len(bcstat['editfiles'][0]) ) :
 			color = untrack
 			if bcstat['editfiles'][1][i] == True : color = track
-			formatDic[ len(formatDic) ] = [ bcstat['editfiles'][0][i], 'BCgit/icons/edit.png', color ]
-
-		listStat = Aitemlist.itemConvert( dic=formatDic )
+			formatDic[ len(formatDic) ] = [ bcstat['editfiles'][0][i], '../icons/edit.png', color ]
 
 		# add list in the ui
-		Aitemlist.add( itemList=self.itemlist_stat, items=listStat, append=False )
+		self.itemlist_stat.add( items=self.itemlist_stat.itemConvert( dic=formatDic ), append=False )
 		self.branch()
 
 	def branch( self ):
 		'''Update the itemlist for branch UI.'''
 		# defind class
-		Aitemlist = Anvil.core.Itemlist()
 		BCgitActions = BCgit.core.BCgitActions()
 
 		# defind listBranch
@@ -153,10 +143,9 @@ class ClassLoader():
 		for i in range( len(bcstat['master']) )   : formatDic[ len(formatDic) ] = [ bcstat['master'][0],   'BCgit/icons/master.png',  [0.0, 0.0, 0.7] ]
 		for i in range( len(bcstat['checkout']) ) : formatDic[ len(formatDic) ] = [ bcstat['checkout'][0], 'BCgit/icons/check.png',   [0.5, 0.3, 0.0] ]
 		for i in range( len(bcstat['branch']) )   : formatDic[ len(formatDic) ] = [ bcstat['branch'][i],   'BCgit/icons/uncheck.png', [0.3, 0.3, 0.3] ]
-		listBranch = Aitemlist.itemConvert( dic=formatDic )
 
 		# add list in the ui
-		Aitemlist.add( itemList=self.itemlist_branch, items=listBranch, append=False )
+		self.itemlist_branch.add( items=self.itemlist_branch.itemConvert( dic=formatDic ), append=False )
 
 	def newBranch( self ):
 		'''Create new branch.'''
@@ -253,11 +242,9 @@ class ClassLoader():
 		'''Launch diff cmd.'''
 		# defind class
 		BCgitActions = BCgit.core.BCgitActions()
-		Aitemlist    = Anvil.core.Itemlist()
 
 		workspace = self.textfield_userWS.text()
-		file      = Aitemlist.list( itemList=self.itemlist_stat, selected=True )[0].text()
-
+		file      = self.itemlist_stat.list( selected=True )[0].text()
 		content = BCgitActions.diff( workspace=self.textfield_userWS.text(), file=file, full=False )
 
 		formatDic = {}
@@ -266,14 +253,9 @@ class ClassLoader():
 			elif content[i].startswith('-'): formatDic[i] = [ content[i], 'BCgit/icons/deleted.png', [1.0, 0.0, 0.0] ]
 			else :                           formatDic[i] = [ content[i], 'BCgit/icons/uncheck.png', [0.3, 0.3, 0.3] ]
 
-		content = Aitemlist.itemConvert( dic=formatDic)
-
 		# build window
-		self.diffWin = TextWindow( workspace=self.textfield_userWS.text(), title=file, content=content)
+		self.diffWin = TextWindow( workspace=self.textfield_userWS.text(), title=file, content=self.itemlist_stat.itemConvert(dic=formatDic) )
 		self.diffWin.app().show()
-		
-
-
 
 
 ################################################################################################
@@ -321,22 +303,30 @@ class TextWindow():
 		self.workspace = workspace
 		self.fullMode = False
 
-		Awindow      = Anvil.core.Window()
-		Alayout      = Anvil.core.Layout()
-		Aitemlist    = Anvil.core.Itemlist()
-		Abutton      = Anvil.core.Button()
-		Abox         = Anvil.core.Box()
+		Awindow      = Anvil.core.Window
+		Alayout      = Anvil.core.Layout
+		Aitemlist    = Anvil.core.Itemlist
+		Abutton      = Anvil.core.Button
+		Abox         = Anvil.core.Box
 
+		# define windows
+		self.window = Awindow( title=title, size=[ 1000, 500 ] )
+		
+		# define box
+		box_diff = Abox( parent=self.window, name='Difference',  w=980, h=460, x=10, y=25 )
+		
+		# define layout
+		layout_sourceCode = Alayout( parent=box_diff )
+		
+		# define itemlist
+		self.sourceCode   = Aitemlist( w=960, h=400 )
+		
+		# define button
+		self.button_fullCode = Abutton( name='Compact code', cmd=self.fullCode, w=960 )
 
-		self.window = Awindow.create( title=title, size=[ 1000, 500 ] )
-		box_diff  = Abox.create( parent=self.window, name='Difference',  w=1000, h=500, x=10, y=25 )
-		layout_sourceCode = Alayout.create( parent=box_diff )
-		self.sourceCode = Aitemlist.create()
-		self.button_fullCode = Abutton.create( name='Compact code', cmd=self.fullCode )
-
-		Aitemlist.add( itemList=self.sourceCode, items=content, append=False, sort=False )
-		layout_sourceCode.addWidget( self.sourceCode )
-		layout_sourceCode.addWidget( self.button_fullCode )
+		self.sourceCode.add( items=content, append=False, sort=False )
+		layout_sourceCode.add( self.sourceCode )
+		layout_sourceCode.add( self.button_fullCode )
 
 	def fullCode( self ):
 		if self.fullMode == True :
@@ -347,7 +337,6 @@ class TextWindow():
 			self.fullMode = True
 
 		BCgitActions = BCgit.core.BCgitActions()
-		Aitemlist    = Anvil.core.Itemlist()
 
 		content = BCgitActions.diff( workspace=self.workspace, file=self.window.windowTitle().title(), full=self.fullMode )
 
@@ -357,9 +346,7 @@ class TextWindow():
 			elif content[i].startswith('-'): formatDic[i] = [ content[i], 'BCgit/icons/deleted.png', [1.0, 0.0, 0.0] ]
 			else :                           formatDic[i] = [ content[i], 'BCgit/icons/uncheck.png', [0.3, 0.3, 0.3] ]
 
-		content = Aitemlist.itemConvert( dic=formatDic)
-
-		Aitemlist.add( itemList=self.sourceCode, items=content, append=False, sort=False )
+		self.sourceCode.add( items=self.sourceCode.itemConvert( dic=formatDic), append=False, sort=False )
 
 
 	def app( self ):
