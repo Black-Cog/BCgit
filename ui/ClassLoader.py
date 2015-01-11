@@ -32,8 +32,6 @@ class ClassLoader():
 		layout_main = Alayout( parent=self.window, x=10, y=20 )
 
 		# boxs init
-		# box_general = Abox( parent=self.window, name='General', w=450, h=320, x=10, y=25 )
-		# box_branch  = Abox( parent=self.window, name='Branch',  w=160, h=320, x=470, y=25 )
 		box_general = Abox( name='General', w=440, h=320 )
 		box_branch  = Abox( name='Branch',  w=170, h=320 )
 
@@ -119,16 +117,16 @@ class ClassLoader():
 		for i in range( len(bcstat['newfiles'][0]) ) :
 			color = untrack
 			if bcstat['newfiles'][1][i] == True : color = track
-			formatDic[ len(formatDic) ] = [ bcstat['newfiles'][0][i], 'BCgit/icons/new.png', color ]
+			formatDic[ len(formatDic) ] = [ bcstat['newfiles'][0][i], '../icons/new.png', color ]
 		for i in range( len(bcstat['deletedfiles'][0]) ) :
 			color = untrack
 			if bcstat['deletedfiles'][1][i] == True : color = track
-			formatDic[ len(formatDic) ] = [ bcstat['deletedfiles'][0][i], 'BCgit/icons/deleted.png', color ]
+			formatDic[ len(formatDic) ] = [ bcstat['deletedfiles'][0][i], '../icons/deleted.png', color ]
 
 		for i in range( len(bcstat['editfiles'][0]) ) :
 			color = untrack
 			if bcstat['editfiles'][1][i] == True : color = track
-			formatDic[ len(formatDic) ] = [ bcstat['editfiles'][0][i], 'BCgit/icons/edit.png', color ]
+			formatDic[ len(formatDic) ] = [ bcstat['editfiles'][0][i], '../icons/edit.png', color ]
 
 		# add list in the ui
 		self.itemlist_stat.add( items=self.itemlist_stat.itemConvert( dic=formatDic ), append=False )
